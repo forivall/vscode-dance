@@ -571,13 +571,13 @@ export function parseKeys(keys: string) {
 function getCommands(module: Omit<Builder.ParsedModule, "commands">) {
   const computeWhen = ({ enablement }: Builder.ParsedFunction | Builder.AdditionalCommand) => {
     // TODO: improve conditions
-    let when = "dance.mode == 'normal'";
+    let when = ["dance.mode == 'normal'", "dance.mode == 'select'"];
 
     if (enablement !== undefined) {
-      when += " && " + enablement;
+      when = when.map((clause) => clause + " && " + enablement);
     }
 
-    return when;
+    return when.join(" || ");
   };
 
   return [
