@@ -155,6 +155,10 @@
                   "Inherit from `editor.lineNumbers`."
                 ]
               },
+              "smartCase": {
+                "type": "boolean",
+                "description": "Controls automatic case insensitivity in search"
+              },
               "onEnterMode": {
                 "type": "array",
                 "items": {

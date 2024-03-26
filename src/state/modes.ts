@@ -21,6 +21,7 @@ export class Mode {
   private _selectionDecorationType?: vscode.TextEditorDecorationType;
   private _hiddenSelectionsIndicatorsDecorationType?: vscode.TextEditorDecorationType;
   private _selectionBehavior = SelectionBehavior.Caret;
+  private _smartCase = false;
   private _onEnterMode: readonly command.Any[] = [];
   private _onLeaveMode: readonly command.Any[] = [];
   private _decorations: readonly Mode.Decoration[] = [];
@@ -59,6 +60,10 @@ export class Mode {
 
   public get selectionBehavior() {
     return this._selectionBehavior;
+  }
+
+  public get smartCase() {
+    return this._smartCase;
   }
 
   public get onEnterMode() {
@@ -197,6 +202,12 @@ export class Mode {
     if (this._selectionBehavior !== selectionBehavior) {
       this._selectionBehavior = selectionBehavior;
       changedProperties.push("selectionBehavior");
+    }
+
+    const smartCase = map("smartCase", "smartCase", Boolean);
+    if (this._smartCase !== smartCase) {
+      this._smartCase = smartCase;
+      changedProperties.push("smartCase");
     }
 
     // Selection decorations.
@@ -498,6 +509,7 @@ export declare namespace Mode {
     onEnterMode?: readonly command.Any[];
     onLeaveMode?: readonly command.Any[];
     selectionBehavior?: Configuration.SelectionBehavior | null;
+    smartCase?: boolean;
   }
 
   /**
@@ -559,6 +571,7 @@ export class Modes implements Iterable<Mode> {
     lineHighlight: null,
     lineNumbers: "on",
     selectionBehavior: "caret",
+    smartCase: false,
     decorations: [],
   };
   private readonly _vscodeMode = new Mode(this, "", undefined!);
@@ -745,6 +758,15 @@ export class Modes implements Iterable<Mode> {
       "editor.lineNumbers",
       (value, validator) => {
         this._vscodeModeDefaults.lineNumbers = value;
+        this._vscodeMode.apply({ ...this._vscodeModeDefaults }, validator);
+      },
+      true,
+    );
+
+    extension.observePreference<boolean>(
+      "search.smartCase",
+      (value, validator) => {
+        this._vscodeModeDefaults.smartCase = value;
         this._vscodeMode.apply({ ...this._vscodeModeDefaults }, validator);
       },
       true,

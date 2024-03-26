@@ -39,7 +39,7 @@ export async function search(
     value: (await register.get())?.[0],
   }, async (re, selections) => {
     if (typeof re === "string") {
-      re = newRegExp(re, "mu");
+      re = newRegExp(re, "mu", _.mode.smartCase);
     }
 
     register.set([re.originalSource ?? re.source]);

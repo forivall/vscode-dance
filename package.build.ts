@@ -256,6 +256,10 @@ export const pkg = (modules: Builder.ParsedModule[]) => ({
                   "Inherit from `editor.lineNumbers`.",
                 ],
               },
+              smartCase: {
+                type: "boolean",
+                description: "Controls automatic case insensitivity in search",
+              },
               onEnterMode: {
                 ...commandType,
                 description:

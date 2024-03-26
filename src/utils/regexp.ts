@@ -1743,18 +1743,28 @@ export function execRange(text: string, re: RegExp) {
  * Internal version of `new RegExp` with support for flags specified with e.g.
  * `(?i)`.
  */
-export function newRegExp(pattern: string | RegExp, flags: string = "") {
+export function newRegExp(pattern: string | RegExp, flags: string = "", smartCase = false) {
   if (pattern instanceof RegExp) {
     pattern = pattern.source;
   }
 
   const originalSource = pattern;
-  let m;
 
-  while (m = /^\(\?([gimsuy]+)\)/.exec(pattern)) {
+  if (smartCase && !flags.includes("i") && !/[\p{Lu}]/u.test(pattern))  {
+    flags += "i";
+  }
+
+  let m;
+  let negate = false;
+
+  while (m = /^\(\?([gimsuy-]+)\)/.exec(pattern)) {
     for (const ch of m[1]) {
-      if (!flags.includes(ch)) {
+      if (ch === "-") {
+        negate = true;
+      } else if (!negate && !flags.includes(ch)) {
         flags += ch;
+      } else if (negate && flags.includes(ch)) {
+        flags = flags.replace(ch, "");
       }
     }
 
